@@ -1,16 +1,20 @@
 import { useContext } from "react";
-import { StyleSheet,Text,View, Dimensions } from "react-native";
+import { StyleSheet,Text, Dimensions, Pressable } from "react-native";
+import { longPressContext } from "../utils/provideContext";
+import { Alert } from "react-native";
 const window = Dimensions.get('window')
 const itemWidth = window.width/2 - 20
 export default function Item({item}){
+
+   const handleLongPress = useContext(longPressContext)
    
     return (
-        <View style = {styles.itemContainer} >
+        <Pressable style = {styles.itemContainer} onLongPress = {() => handleLongPress(item.id)}>
             <Text style={styles.noteCreatedAt}>{item.date}</Text>
             <Text style = {styles.itemName}>{item.name}</Text>
             <Text >{item.description}</Text>
             
-        </View>
+        </Pressable>
     )
 }
 const styles = StyleSheet.create({

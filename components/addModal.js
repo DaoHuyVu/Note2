@@ -5,7 +5,7 @@ const window = Dimensions.get('window')
 const modalHeightSize = Math.floor(window.height*0.5)
 const modalWidthSize = Math.floor(window.width*0.8)
 let nextId = 0
-export default function AddModal({handleClose,modalVisible,handleAdd}){
+export default function AddModal({handleClose,handleAdd}){
     const [noteName,setNoteName] = useState('')
     const [noteDescription,setNoteDescription] = useState('')
     function add(){
@@ -15,9 +15,8 @@ export default function AddModal({handleClose,modalVisible,handleAdd}){
     }
     return (
         <Modal
-                transparent = {true}
-                animationType="slide"
-                visible={modalVisible}>
+            transparent = {true}
+            animationType="fade">
                 <View style={styles.centerView}>
                     <View style={styles.modalView}>
                         <View style={styles.modalHeader}>
@@ -29,11 +28,13 @@ export default function AddModal({handleClose,modalVisible,handleAdd}){
                         <View style={styles.modalBody}>
                             <TextInput 
                                 placeholder="Name..."
+                                
                                 onChangeText={setNoteName}
                                 style={styles.textInput}
                             />
                             <TextInput 
                                 placeholder="Description..."
+                                
                                 onChangeText={setNoteDescription}
                                 style={styles.textInput}
                             />
