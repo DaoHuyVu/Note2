@@ -1,6 +1,7 @@
 import { useContext } from "react";
-import { StyleSheet,Text,View } from "react-native";
-
+import { StyleSheet,Text,View, Dimensions } from "react-native";
+const window = Dimensions.get('window')
+const itemWidth = window.width/2 - 20
 export default function Item({item}){
    
     return (
@@ -18,10 +19,10 @@ const styles = StyleSheet.create({
         margin : 10,   
         borderWidth : 1,
         padding : 10,
-        width : '48%'
+        width : itemWidth
     },
     itemName : {
-        fontSize : 30,
+        fontSize : 16,
         fontWeight : 'bold',
     },
     noteCreatedAt : {

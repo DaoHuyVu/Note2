@@ -11,7 +11,7 @@ export default function App(){
   
   return (
     <NavigationContainer>
-      <StatusBar barStyle='light-content' backgroundColor='light blue'></StatusBar>
+      <StatusBar barStyle='light-content' backgroundColor='purple'></StatusBar>
       
       <Stack.Navigator initialRouteName='Home' >
         <Stack.Screen name="Home" component={HomeScreen} />

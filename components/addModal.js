@@ -2,8 +2,8 @@ import { Modal,View,Pressable,StyleSheet,Text ,Dimensions, TextInput} from "reac
 import Icon from '@expo/vector-icons/FontAwesome'
 import { useState } from "react"
 const window = Dimensions.get('window')
-const modalHeightSize = Math.floor(window.height*0.7)
-const modalWidthSize = Math.floor(window.width*0.7)
+const modalHeightSize = Math.floor(window.height*0.5)
+const modalWidthSize = Math.floor(window.width*0.8)
 let nextId = 0
 export default function AddModal({handleClose,modalVisible,handleAdd}){
     const [noteName,setNoteName] = useState('')
@@ -34,7 +34,6 @@ export default function AddModal({handleClose,modalVisible,handleAdd}){
                             />
                             <TextInput 
                                 placeholder="Description..."
-                                multiline = 'true'
                                 onChangeText={setNoteDescription}
                                 style={styles.textInput}
                             />

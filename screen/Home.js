@@ -13,8 +13,7 @@ export default function Home({navigation}){
     function handleAdd(list){
         setNoteList([...noteList,list])
     }
-    const filterNoteList = noteList.length > 0 ? noteList.filter(item => item.name.includes(searchString)) : null
-    console.log(filterNoteList)
+    const filterNoteList = noteList.length > 0 ? noteList.filter(item => filterItem(item,searchString)) : null
     return (
         <View style={styles.container}>
             <AddModal 
