@@ -1,16 +1,17 @@
 import { Modal,View,Pressable,StyleSheet,Text ,Dimensions, TextInput} from "react-native"
 import Icon from '@expo/vector-icons/FontAwesome'
 import { useState } from "react"
+import {v4 as uuid} from 'uuid'
 const window = Dimensions.get('window')
 const modalHeightSize = Math.floor(window.height*0.5)
 const modalWidthSize = Math.floor(window.width*0.8)
-let nextId = 0
+
 export default function AddModal({handleClose,handleAdd}){
     const [noteName,setNoteName] = useState('')
     const [noteDescription,setNoteDescription] = useState('')
     function add(){
         const today = new Date(Date.now()).toLocaleString()
-        handleAdd({id : nextId++,name : noteName,description : noteDescription,date : today})
+        handleAdd({id : uuid(),name : noteName,description : noteDescription,date : today})
         handleClose()
     }
     return (

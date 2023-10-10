@@ -1,3 +1,3 @@
-export default function filterItem(item,searchString){
-    return item.name.toLowerCase().includes(searchString.toLowerCase())
+export default function filterItem(item,searchQuery){
+    return item.name.toLowerCase().includes(searchQuery.toLowerCase())
 }

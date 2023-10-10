@@ -1,0 +1,8 @@
+export const constants = {
+    ADD_NOTE : 'ADD_NOTE',
+    DELETE_NOTE : 'DELETE_NOTE',
+    MODAL_VISIBLE : 'MODAL_VISIBLE',
+    GET_NOTE : 'GET_NOTE',
+    SEARCH_CHANGE : 'SEARCH_CHANGE'
+
+}
