@@ -1,11 +1,11 @@
 import { FlatList,View,StyleSheet } from "react-native"
 import Item from "./Item"
-export default function NoteList({filterNoteList}){
+export default function NoteList({numColumns,filterNoteList}){
     return (
         <View style={styles.container}>
             <FlatList
             keyExtractor={item => item.id}
-            numColumns={2}
+            numColumns={numColumns}
             data={filterNoteList}
             renderItem={({item}) => <Item item = {item}/>}
             />

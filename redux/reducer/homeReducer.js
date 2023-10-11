@@ -10,7 +10,7 @@ export const reducer = (state = initialState,action) => {
             return {...state,noteList : [...state.noteList,action.payload.note]}
         }
         case constants.DELETE_NOTE : {
-            return {...state,noteList : state.noteList.filter(note => note !== action.payload.id)}
+            return {...state,noteList : state.noteList.filter(note => note.id !== action.payload.id)}
         }
         case constants.MODAL_VISIBLE : {
             return {...state,modalVisible : action.modalVisible}

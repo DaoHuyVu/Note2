@@ -4,5 +4,4 @@ export const constants = {
     MODAL_VISIBLE : 'MODAL_VISIBLE',
     GET_NOTE : 'GET_NOTE',
     SEARCH_CHANGE : 'SEARCH_CHANGE'
-
 }

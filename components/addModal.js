@@ -9,9 +9,10 @@ const modalWidthSize = Math.floor(window.width*0.8)
 export default function AddModal({handleClose,handleAdd}){
     const [noteName,setNoteName] = useState('')
     const [noteDescription,setNoteDescription] = useState('')
+    const isAddable = noteName.length > 0 && noteDescription.length > 0
     function add(){
         const today = new Date(Date.now()).toLocaleString()
-        handleAdd({id : uuid(),name : noteName,description : noteDescription,date : today})
+        handleAdd({id : uuid(),name : noteName,description : noteDescription,date : today,done : false})
         handleClose()
     }
     return (
@@ -33,22 +34,29 @@ export default function AddModal({handleClose,handleAdd}){
                                 onChangeText={setNoteName}
                                 style={styles.textInput}
                             />
+                            {noteName.length == 0 && 
+                            <Text style={{color : 'red',width : '70%'}}>
+                                *Name is required
+                            </Text>}
                             <TextInput 
                                 placeholder="Description..."
-                                
                                 onChangeText={setNoteDescription}
                                 style={styles.textInput}
                             />
+                            {noteDescription.length == 0 && 
+                            <Text style={{color : 'red',width : '70%'}}>
+                                *Description is required
+                            </Text>}
                         </View>
                         <View style = {styles.buttonGroup}> 
                             <Pressable 
-                                style={[styles.button,{backgroundColor : 'orange'}]} 
+                                style={[styles.button,{backgroundColor : isAddable ? 'orange' : 'gray'}]} 
                                 onPress={() => add()}
-                                >
+                                disabled = {!isAddable}>
                                 <Text>Add</Text>
                             </Pressable>
                             <Pressable 
-                                style={[styles.button,{backgroundColor : 'gray'}]} 
+                                style={styles.button} 
                                 onPress={handleClose}>
                                 <Text>Close</Text>
                             </Pressable>
