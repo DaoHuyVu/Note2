@@ -18,6 +18,7 @@ export default function EditNotes({route,navigation}){
         dispatch(actionCreators.update(route.params.itemId,state))
         navigation.goBack()
     }
+    const isUpdateable = state.name.length > 0 && state.description.length > 0
     return (
         <View style={styles.container}>
             <TextInput 
@@ -26,12 +27,23 @@ export default function EditNotes({route,navigation}){
             style = {styles.input}
             onChangeText={text => dispatch(actionCreators.nameChange(text))}
             />
+             {state.name.length == 0 && 
+                <Text style={{color : 'red',width : '70%'}}>
+                    *Name is required
+                </Text>}
             <TextInput 
             style={styles.input}
             value = {state.description}
             placeholder='Description...'
             onChangeText={text => dispatch(actionCreators.descriptionChange(text))}/>
-            <Pressable style={styles.button} onPress={handleUpdate}>
+            {state.description.length == 0 && 
+                <Text style={{color : 'red',width : '70%'}}>
+                    *Name is required
+                </Text>}
+            <Pressable 
+            style={[styles.button,{backgroundColor : isUpdateable ? 'orange' : 'gray'}]} 
+            onPress={handleUpdate}
+            disabled = {!isUpdateable}>
                 <Text>Update</Text>
             </Pressable>
         </View>

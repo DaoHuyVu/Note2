@@ -60,7 +60,7 @@ import { api } from "../api/noteApi";
                 searchQuery = {searchQuery} 
                 setSearchQuery = {text => dispatch(actionCreators.handleQueryChange(text))}
             />
-            <NoteList  searchQuery = {searchQuery} filterNoteList = {filterNoteList ??  noteList}/>
+            <NoteList  filterNoteList = {filterNoteList ??  noteList} numColumns={2}/>
             <Fab onPress = {() =>  {dispatch(actionCreators.changeModalVisible(true))} }/>
         </View>
         </longPressContext.Provider>
