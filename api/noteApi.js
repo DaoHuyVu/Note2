@@ -1,6 +1,6 @@
 import storage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
-const BASE_URL = "http://localhost:9192"
+const BASE_URL = "http://192.168.31.23:9192"
 const axiotInstance = axios.create({baseURL : BASE_URL})
 export const api = {
     add : async (note) => {
@@ -35,5 +35,8 @@ export const api = {
     },
     login : async (userName,password) => {
         return await axiotInstance.post("api/v1/login",{userName : userName,password : password})
+    },
+    signUp : async (em,un,pw) => {
+        return await axiotInstance.post("/api/v1/signup",{email : em,userName : un, password : pw})
     }
 }

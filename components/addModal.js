@@ -2,7 +2,7 @@ import { Modal,View,Pressable,StyleSheet,Text ,Dimensions, TextInput} from "reac
 import Icon from '@expo/vector-icons/FontAwesome'
 import { useState } from "react"
 import {v4 as uuid} from 'uuid'
-const window = Dimensions.get('window')
+const window = Dimensions.get('screen')
 const modalHeightSize = Math.floor(window.height*0.5)
 const modalWidthSize = Math.floor(window.width*0.8)
 

@@ -1,25 +1,41 @@
-import { StyleSheet, TextInput, View ,Text,Pressable, ActivityIndicator} from "react-native"
+import { StyleSheet, TextInput, View ,Text,Pressable, ActivityIndicator, Platform} from "react-native"
 import {  useContext, useReducer } from "react"
 import { initialState, reducer } from "../redux/reducer/loginReducer"
 import { Dimensions } from "react-native"
 import { actionCreators } from "../redux/action/loginAction"
 import {api} from "../api/noteApi"
-const window = Dimensions.get('window')
+
+const window = Dimensions.get('screen')
 const modalHeightSize = Math.floor(window.height*0.5)
 const modalWidthSize = Math.floor(window.width*0.8)
-export const Login = ({navigation}) =>  {
+const Login = ({navigation}) =>  {
     const [state,dispatch] = useReducer(reducer,initialState)
     const {userName,password,isLoading} = state
+    const handleSignUp = () =>{
+        navigation.navigate('SignUp')
+    }
     const handleLogin = async () => {
-        dispatch(actionCreators.loading())
-        setTimeout(async () => {
-            try{
-                const res = await api.login(userName,password)
-                dispatch(actionCreators.success(res.response.data))
-            }catch(e){
-                dispatch(actionCreators.fail(e.response.data))
+        if(userName.length == 0){
+            console.log("Username must not be empty")
+           //ToastAndroid.showWithGravity("Username must not be empty",ToastAndroid.SHORT,ToastAndroid.CENTER)
+        }
+        else{
+            if(password.length == 0){
+                console.log("Password must not be empty")
+                 //ToastAndroid.showWithGravity("Password must not be empty",ToastAndroid.SHORT,ToastAndroid.CENTER)
             }
-        }, 2000);
+            else{
+                dispatch(actionCreators.loading())
+                    setTimeout(async () => {
+                        try{
+                            const res = await api.login(userName,password)
+                            dispatch(actionCreators.success(res.response.data))
+                        }catch(e){
+                            dispatch(actionCreators.fail(e.response.data))
+                        }
+                    }, 2000);
+            }
+        }
     }
     const handleUsernameChange = (un) => {
         dispatch(actionCreators.userNameChange(un))
@@ -44,6 +60,7 @@ export const Login = ({navigation}) =>  {
                 <Pressable style={styles.button} onPress={handleLogin} disabled = {isLoading}>
                     <Text style = {{color : 'white'}}>Login</Text>
                 </Pressable>
+                <Text>Don't have an account?<Pressable onPress={handleSignUp}><b> Sign up</b></Pressable></Text>
             </View>
             
            {isLoading && <ActivityIndicator size={'large'} style={styles.progressBar}/>}
@@ -84,3 +101,4 @@ const styles = StyleSheet.create({
         position : 'absolute',
     }
 })
+export default Login

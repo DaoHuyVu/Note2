@@ -3,7 +3,8 @@ import { ActivityIndicator, StatusBar } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native'
 import Home from './screen/Home'
 import Edit from './screen/EditNote'
-import { Login } from './screen/Login';
+import Login  from './screen/Login';
+import SignUp from './screen/SignUp'
 const Stack = createNativeStackNavigator()
 
 export default function App(){
@@ -15,6 +16,7 @@ export default function App(){
           <Stack.Screen name='Home' component={Home}/>
           <Stack.Screen name='Edit' component={Edit} />
           <Stack.Screen name='Login' component={Login} />
+          <Stack.Screen name='SignUp' component={SignUp}/>
       </Stack.Navigator>
       
     </NavigationContainer>
