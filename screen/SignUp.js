@@ -1,5 +1,6 @@
-import { ActivityIndicator, Pressable, StyleSheet ,Text,TextInput,View} from "react-native"
+import { ActivityIndicator, Pressable, StyleSheet ,Text,TextInput,View,ToastAndroid, KeyboardAvoidingView} from "react-native"
 import { validateEmail, validatePassword, validateUserName,AllFieldValid} from "../utils/validateInput"
+import {CommonActions} from '@react-navigation/native'
 import { useReducer } from "react"
 import {reducer,initialState} from '../redux/reducer/signUpReducer'
 import actionCreators from "../redux/action/signUpAction"
@@ -11,8 +12,13 @@ const modalWidthSize = Math.floor(window.width*0.8)
 
 const SignUp = ({navigation}) => {
     const [state,dispatch] = useReducer(reducer,initialState)
-    const {email,userName,password,reEnterPassword,isLoading,errorMessage,token} = state
-    {token && navigation.replace('Home')}
+    const {email,userName,password,reEnterPassword,isLoading,token} = state
+    {token && navigation.dispatch(CommonActions.reset({
+        index : 1,
+        routes : [
+            {name : 'Home'}
+        ]})
+    )}
     const handleUserNameChange = (userName)=>{
         dispatch(actionCreators.userNameChange(userName))
     }
@@ -28,17 +34,17 @@ const SignUp = ({navigation}) => {
     const handleSignUp = () => {
         dispatch(actionCreators.loading())
         setTimeout(async ()=>{
-            let res
             try{
-                const res = await api.signUp(em,un,pw)
-                dispatch(actionCreators.success(un))
+                const res = await api.signUp(email,userName,password)
+                dispatch(actionCreators.success(res.data))
             }catch(e){
-                dispatch(actionCreators.fail(res.response.data))
+                dispatch(actionCreators.fail())
+                //ToastAndroid.showWithGravity(e.response.data.message,ToastAndroid.SHORT,ToastAndroid.CENTER)
             }
         },2000)
     }
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior="height">
             <View style={styles.input_container}>
                 <TextInput 
                     style={styles.input_field}
@@ -62,18 +68,18 @@ const SignUp = ({navigation}) => {
                     value={password}
                     style={styles.input_field}
                     placeholder="Password..."
-                    secureTextEntry = 'true'
+                    secureTextEntry = {true}
                     onChangeText={handlePasswordChange}
                 />
                 {!validatePassword(password) 
                     && 
-                <Text style={styles.invalid}>*Password's length must be in range of 8 to 32</Text>} 
+                <Text style={styles.invalid}>*Password's length must be greater than or equal 8 </Text>} 
 
                 <TextInput 
                     value={reEnterPassword}
                     style={styles.input_field}
                     placeholder="Re-enter password..."
-                    secureTextEntry = 'true'
+                    secureTextEntry = {true}
                     onChangeText={handleReEnterPasswordChange}
                 />
                 {password !== reEnterPassword
@@ -81,12 +87,13 @@ const SignUp = ({navigation}) => {
                 <Text style={styles.invalid}>*Does not match password field</Text>} 
                 <Pressable 
                 style={styles.button} 
-                onPress = {handleSignUp} disabled={isLoading || AllFieldValid(email,userName,password,reEnterPassword)}>
+                disabled={isLoading || !AllFieldValid(email,userName,password,reEnterPassword)}
+                onPress = {handleSignUp} >
                     <Text>Sign up</Text>
                 </Pressable>
             </View>
             {isLoading && <ActivityIndicator size={'large'} style={styles.progressBar}/>}
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 const styles = StyleSheet.create({

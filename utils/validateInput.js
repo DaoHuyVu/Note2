@@ -1,7 +1,6 @@
 
 export const validateEmail = (email) => {
-    const regex = /^[\w\\-\\.]+@([\w\\-]+\\.)+[\w\\-]{2,4}$/i
-    if(email.match(regex))
+    if(email.match(/^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/))
     return true
     return false
 }
@@ -11,7 +10,7 @@ export const validateUserName = (userName) => {
     return false
 }
 export const validatePassword = (password) => {
-    if(password.match("^[a-z]{8,25}$"))
+    if(password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/))
     return true
     return false
 }

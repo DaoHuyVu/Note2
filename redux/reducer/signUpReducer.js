@@ -4,7 +4,6 @@ export const initialState = {
     password : "",
     reEnterPassword : "",
     isLoading : false,
-    errorMessage : null,
     token : null,
 }
 export const reducer = (state = initialState,action) => {
@@ -15,6 +14,6 @@ export const reducer = (state = initialState,action) => {
         case 're_enter_password_change' : return {...state,reEnterPassword : action.pw}
         case 'loading' : return {...state,isLoading : true}
         case 'success' : return {...state,isLoading : false,token : action.token}
-        case 'fail' : return {...state,isLoading : false,errorMessage : action.message}
+        case 'fail' : return {...state,isLoading : false}
     }
 }

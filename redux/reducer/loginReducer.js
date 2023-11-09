@@ -2,9 +2,6 @@ export const initialState = {
     userName : '',
     password : '',
     isLoading : false,
-    token : null,
-    credentialInvalid : null,
-    credentialError : null
 }
 export const reducer = (state = initialState,action) => {
     switch(action.type){
@@ -18,13 +15,10 @@ export const reducer = (state = initialState,action) => {
             return {...state,isLoading : true}
         }
         case 'success' : {
-            return {...state,token : action.token,isLoading : false}
-        }
-        case 'credential_fail' : {
-            return {...state,isLoading : false,}
+            return {...state,isLoading : false}
         }
         case 'fail' : {
-            return {...state,errorMessage : action.errorMessage,isLoading : false}
+            return {...state,isLoading : false}
         }
         default : return state
     }

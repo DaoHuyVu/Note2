@@ -9,10 +9,10 @@ export const actionCreators = {
     passwordChange : (pw) => {
         return {type : 'password_change',password : pw}
     },
-    success : (res) => {
-        return {type : 'success',token : res.data.userName}
+    success : () => {
+        return {type : 'success'}
     },
-    fail : (message) => {
-        return {type : 'fail',errorMessage : message}
+    fail : () => {
+        return {type : 'fail'}
     }
 }

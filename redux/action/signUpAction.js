@@ -5,6 +5,6 @@ const actionCreators = {
     reEnterPasswordChange : (pw) => ({type : 're_enter_password_change',pw : pw}),
     loading : () => ({type : 'loading'}),
     success : (token) => ({type : 'success',token : token}),
-    fail : (message) => ({type : 'fail',message : message})
+    fail : () => ({type : 'fail'})
 }
 export default actionCreators

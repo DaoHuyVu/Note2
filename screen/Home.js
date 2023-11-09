@@ -1,5 +1,5 @@
-import { useCallback, useReducer  } from "react";
-import { StyleSheet,View,Alert} from "react-native";
+import { useCallback, useEffect, useReducer  } from "react";
+import { StyleSheet,View,Alert, Pressable,Text} from "react-native";
 import  SearchBar  from "../components/SearchBar";
 import  Fab  from "../components/Fab";
 import NoteList  from "../components/NoteList";
@@ -10,21 +10,26 @@ import { longPressContext,pressContext} from "../utils/provideContext";
 import { reducer,initialState} from "../redux/reducer/homeReducer";
 import { actionCreators } from "../redux/action/homeAction";
 import { api } from "../api/noteApi";
+import * as SecureStore from 'expo-secure-store'
+
 
     export default function Home({navigation}){
         const [state,dispatch] = useReducer(reducer,initialState)
         const {searchQuery,modalVisible,noteList} = state
 
     const fetchNotes = async () => {
+        const token = await SecureStore.getItemAsync('userToken')
         const noteList = await api.getNotes()
         dispatch(actionCreators.getNotes(noteList))
     }
+    
     useFocusEffect(
         useCallback(()=>{
             fetchNotes()
-        },[])
+        }
+        ,[])
     )    
-
+   
     function handlePress(id){
         navigation.navigate('Edit',{itemId : id})
     }
@@ -55,7 +60,8 @@ import { api } from "../api/noteApi";
             <AddModal 
                 handleClose = {() => dispatch(actionCreators.changeModalVisible(false))}
                 handleAdd = {note => dispatch(actionCreators.addNote(note))}/>  
-            }            
+            }  
+                     
             <SearchBar 
                 searchQuery = {searchQuery} 
                 setSearchQuery = {text => dispatch(actionCreators.handleQueryChange(text))}
@@ -72,5 +78,6 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
     },
+   
   });
   
