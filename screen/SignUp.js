@@ -1,24 +1,20 @@
-import { ActivityIndicator, Pressable, StyleSheet ,Text,TextInput,View,ToastAndroid, KeyboardAvoidingView} from "react-native"
+import { ActivityIndicator, Pressable, StyleSheet ,Text,TextInput,View,ToastAndroid,ScrollView} from "react-native"
 import { validateEmail, validatePassword, validateUserName,AllFieldValid} from "../utils/validateInput"
-import {CommonActions} from '@react-navigation/native'
-import { useReducer } from "react"
+import { StackActions} from '@react-navigation/native'
+import { useEffect, useReducer } from "react"
 import {reducer,initialState} from '../redux/reducer/signUpReducer'
 import actionCreators from "../redux/action/signUpAction"
 import { Dimensions } from "react-native"
 import {api} from '../api/noteApi'
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 const window = Dimensions.get('screen')
 const modalHeightSize = Math.floor(window.height*0.7)
-const modalWidthSize = Math.floor(window.width*0.8)
+const modalWidthSize = Math.floor(window.width)
 
 const SignUp = ({navigation}) => {
     const [state,dispatch] = useReducer(reducer,initialState)
-    const {email,userName,password,reEnterPassword,isLoading,token} = state
-    {token && navigation.dispatch(CommonActions.reset({
-        index : 1,
-        routes : [
-            {name : 'Home'}
-        ]})
-    )}
+    const {email,userName,password,reEnterPassword,isLoading,isSignedUpSuccessfully,isPasswordShown} = state
+
     const handleUserNameChange = (userName)=>{
         dispatch(actionCreators.userNameChange(userName))
     }
@@ -31,25 +27,32 @@ const SignUp = ({navigation}) => {
     const handleReEnterPasswordChange = (reEnterPassword)=>{
         dispatch(actionCreators.reEnterPasswordChange(reEnterPassword))
     }
-    const handleSignUp = () => {
+    const handleTogglePassword = () => {
+        dispatch(actionCreators.togglePassword())
+    }
+    const handleSignUp = async () => {
         dispatch(actionCreators.loading())
-        setTimeout(async ()=>{
             try{
                 const res = await api.signUp(email,userName,password)
-                dispatch(actionCreators.success(res.data))
+                ToastAndroid.showWithGravity(res.data.message,ToastAndroid.SHORT,ToastAndroid.BOTTOM)
+                dispatch(actionCreators.success())
             }catch(e){
                 dispatch(actionCreators.fail())
-                //ToastAndroid.showWithGravity(e.response.data.message,ToastAndroid.SHORT,ToastAndroid.CENTER)
+                ToastAndroid.showWithGravity(e.response.data.message,ToastAndroid.SHORT,ToastAndroid.BOTTOM)
             }
-        },2000)
     }
+        useEffect(() => {
+            isSignedUpSuccessfully && navigation.goBack()
+        },[isSignedUpSuccessfully])
+
     return (
-        <KeyboardAvoidingView style={styles.container} behavior="height">
-            <View style={styles.input_container}>
+        <View style ={styles.container}>
+            <ScrollView  contentContainerStyle={styles.input_container}>
                 <TextInput 
                     style={styles.input_field}
                     placeholder="Email..."
                     value = {email}
+                    autoCapitalize="none"
                     onChangeText={handleEmailChange}/>
                 {!validateEmail(email) 
                     && 
@@ -62,26 +65,44 @@ const SignUp = ({navigation}) => {
                     onChangeText={handleUserNameChange}/>
                 {!validateUserName(userName) 
                     && 
-                <Text style={styles.invalid}>*Username's length must be in range of 8 to 25</Text>} 
+                <Text style={styles.invalid} >*Username's length must be longer than 8 </Text>} 
 
-                <TextInput 
-                    value={password}
-                    style={styles.input_field}
-                    placeholder="Password..."
-                    secureTextEntry = {true}
-                    onChangeText={handlePasswordChange}
-                />
+                <View style={styles.password_container}>
+                    <TextInput 
+                        value={password}
+                        style={styles.input_field}
+                        placeholder="Password..."
+                        autoCapitalize="none"
+                        secureTextEntry = {!isPasswordShown}
+                        onChangeText={handlePasswordChange}
+                    />
+                    <MaterialCommunityIcons
+                            style={styles.icon}
+                            name={isPasswordShown ? 'eye' : 'eye-off'}
+                            size={24}
+                            onPress={handleTogglePassword}
+                        />
+                </View>
                 {!validatePassword(password) 
                     && 
-                <Text style={styles.invalid}>*Password's length must be greater than or equal 8 </Text>} 
+                <Text style={styles.invalid} >*Password's length must be greater than or equal 8 </Text>} 
 
-                <TextInput 
-                    value={reEnterPassword}
-                    style={styles.input_field}
-                    placeholder="Re-enter password..."
-                    secureTextEntry = {true}
-                    onChangeText={handleReEnterPasswordChange}
-                />
+                <View style={styles.password_container}>
+                    <TextInput 
+                        value={reEnterPassword}
+                        style={styles.input_field}
+                        placeholder="Re-enter password..."
+                        autoCapitalize="none"
+                        secureTextEntry = {!isPasswordShown}
+                        onChangeText={handleReEnterPasswordChange}
+                    />
+                    <MaterialCommunityIcons
+                        style={styles.icon}
+                        name={isPasswordShown ? 'eye' : 'eye-off'}
+                        size={24}
+                        onPress={handleTogglePassword}
+                    />
+                </View>
                 {password !== reEnterPassword
                     && 
                 <Text style={styles.invalid}>*Does not match password field</Text>} 
@@ -91,14 +112,15 @@ const SignUp = ({navigation}) => {
                 onPress = {handleSignUp} >
                     <Text>Sign up</Text>
                 </Pressable>
-            </View>
+            </ScrollView>
             {isLoading && <ActivityIndicator size={'large'} style={styles.progressBar}/>}
-        </KeyboardAvoidingView>
+        </View>
     )
 }
 const styles = StyleSheet.create({
     container : {
-        flex : 1,
+        width : '100%',
+        height : '100%',
         justifyContent : 'center',
         alignItems : 'center',  
     },
@@ -107,8 +129,6 @@ const styles = StyleSheet.create({
         width : modalWidthSize,
         justifyContent : 'space-evenly',
         alignItems : 'center',
-        borderWidth : 1,
-        borderRadius : 10,
     },
     input_field : {
         width : '70%',
@@ -131,6 +151,15 @@ const styles = StyleSheet.create({
     },
     invalid : {
         color : 'red'
+    },
+    icon : {
+        position : 'absolute',
+        right : 10
+    },
+    password_container : {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
     }
 })
 export default SignUp

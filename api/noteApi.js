@@ -1,43 +1,75 @@
-import storage from '@react-native-async-storage/async-storage'
-import axios from 'axios'
-const BASE_URL = "http://192.168.31.23:9192"
+import axios, { Axios } from 'axios'
+import  * as SecureStore from 'expo-secure-store'
+const BASE_URL = "https://terrier-modern-violently.ngrok-free.app"
 const axiosInstance = axios.create({baseURL : BASE_URL})
+axiosInstance.interceptors.request.use(
+    async (config) => {
+        const token = await SecureStore.getItemAsync('accessToken')
+        if(!config.url.includes("/api/auth/login") && !config.url.includes("/api/auth/signup")){
+            config.headers.Authorization = `Bearer ${token}`
+        }
+        return config
+    },(error) => {
+        return Promise.reject(error)
+    }
+)
+axiosInstance.interceptors.response.use(
+    (response) => {
+        return response
+    },
+    async (error) => {
+        const originalConfig = error.config
+        if(error.response){
+            if(error.response.status === 403 && !originalConfig.retry){
+                originalConfig.retry = true
+                try{
+                    const refreshToken = await SecureStore.getItemAsync('refreshToken')
+                    const response = await api.refreshToken(refreshToken)
+                    await SecureStore.setItemAsync('accessToken',response.data.accessToken)
+                    return axiosInstance(originalConfig)
+                }catch(_error){
+                    if (_error.response && _error.response.data) {
+                        return Promise.reject(_error.response.data);
+                      }
+                      return Promise.reject(_error);
+                    }
+                }
+            }
+        }
+)
+
 export const api = {
     add : async (note) => {
-        try{
-            await storage.setItem(note.id,JSON.stringify(note))
-        }catch(e){
-            
-        }
+            return await axiosInstance.post("/note",null,{
+                params : {
+                    name : note.name,
+                    description : note.description,
+                    createdAt : note.createdAt,
+                    done : 'false'
+                }
+            })
     },
     delete : async (id) => {
-        try{
-            await storage.removeItem(id)
-        }catch(e){}
+        return await axiosInstance.delete(`/note/${id}`)
     },
-    update : async (id,tempNote) => {
-        try{
-            await storage.mergeItem(id,JSON.stringify(tempNote))
-        }catch(e){}
+    update : async (id,obj) => {
+        return await axiosInstance.patch(`/note/${id}`,null,{
+            params : obj
+        })
     },
     getNote : async (id) => {
-        try{
-            const note = await storage.getItem(id)
-            return JSON.parse(note)
-        }catch(e){}
+        return await axiosInstance.get(`/note/${id}`)
     }, 
     getNotes : async () => {
-        try{
-            const keys = (await storage.getAllKeys()).filter(key => key!=='EXPO_CONSTANTS_INSTALLATION_ID');
-            const result = await storage.multiGet(keys)
-            return result.map(res => JSON.parse(res[1]))
-        }catch(e) {}
+        return await axiosInstance.get("/note")
     },
     login : async (userName,password) => {
-        return await axiosInstance.post("/api/v1/login",{userName : userName,password : password})
+        return await axiosInstance.post("/api/auth/login",{userName : userName,password : password})
     },
     signUp : async (em,un,pw) => {
-        return await axiosInstance.post("/api/v1/signup",{email : em,userName : un, password : pw})
-    },
-    
+        return await axiosInstance.post("/api/auth/signup",{userName : un,email : em, password : pw})
+    }, 
+    refreshToken : async(refreshToken) => {
+        return await axiosInstance.post("/api/auth/refreshToken",{refreshToken})
+    }   
 }

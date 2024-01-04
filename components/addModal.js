@@ -1,7 +1,7 @@
 import { Modal,View,Pressable,StyleSheet,Text ,Dimensions, TextInput} from "react-native"
 import Icon from '@expo/vector-icons/FontAwesome'
 import { useState } from "react"
-import {v4 as uuid} from 'uuid'
+import dateObj from "../utils/dateObj"
 const window = Dimensions.get('screen')
 const modalHeightSize = Math.floor(window.height*0.5)
 const modalWidthSize = Math.floor(window.width*0.8)
@@ -10,15 +10,17 @@ export default function AddModal({handleClose,handleAdd}){
     const [noteName,setNoteName] = useState('')
     const [noteDescription,setNoteDescription] = useState('')
     const isAddable = noteName.length > 0 && noteDescription.length > 0
-    function add(){
-        const today = new Date(Date.now()).toLocaleString()
-        handleAdd({id : uuid(),name : noteName,description : noteDescription,date : today,done : false})
+    const add = () => {
+        const date = Date.now()
+        handleAdd({name : noteName,description : noteDescription,createdAt : date})
         handleClose()
     }
     return (
         <Modal
             transparent = {true}
-            animationType="fade">
+            animationType="slide"
+            onRequestClose={handleClose}
+            >
                 <View style={styles.centerView}>
                     <View style={styles.modalView}>
                         <View style={styles.modalHeader}>
@@ -51,7 +53,7 @@ export default function AddModal({handleClose,handleAdd}){
                         <View style = {styles.buttonGroup}> 
                             <Pressable 
                                 style={[styles.button,{backgroundColor : isAddable ? 'orange' : 'gray'}]} 
-                                onPress={() => add()}
+                                onPress={add}
                                 disabled = {!isAddable}>
                                 <Text>Add</Text>
                             </Pressable>

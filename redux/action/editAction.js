@@ -1,17 +1,25 @@
 import { api } from "../../api/noteApi"
 
 export const actionCreators = {
-    load : (note) => {
-        return {type : 'load',state : note}
-    },
     nameChange : (name) => {
         return {type : 'nameChange',name : name}
     },
     descriptionChange : (des) => {
         return {type : 'descriptionChange',description : des}
     },
-    update : (id,tempNote) => {
-        api.update(id,tempNote)
-        return {type : 'update'}
+    init : (note) => {
+        return {type : 'init',name : note.name,description : note.description}
+    },
+    loading : () => {
+        return {type : 'loading'}
+    },
+    fail : (message) => {
+        return {type : 'failed',message : message}
+    },
+    success : () => {
+        return {type : 'success'}
+    },
+    messageShown : () => {
+        return {type:'message_shown'}
     }
 }

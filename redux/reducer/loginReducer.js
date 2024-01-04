@@ -2,6 +2,9 @@ export const initialState = {
     userName : '',
     password : '',
     isLoading : false,
+    isLoggedIn : false,
+    isPasswordShown : false,
+    message : null
 }
 export const reducer = (state = initialState,action) => {
     switch(action.type){
@@ -15,10 +18,13 @@ export const reducer = (state = initialState,action) => {
             return {...state,isLoading : true}
         }
         case 'success' : {
-            return {...state,isLoading : false}
+            return {...state,isLoading : false,isLoggedIn : true}
         }
         case 'fail' : {
-            return {...state,isLoading : false}
+            return {...state,isLoading : false,message : 'Username or password is wrong'}
+        }
+        case 'toggle_password' : {
+            return {...state,isPasswordShown : !state.isPasswordShown}
         }
         default : return state
     }

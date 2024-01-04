@@ -5,7 +5,7 @@ export const validateEmail = (email) => {
     return false
 }
 export const validateUserName = (userName) => {
-    if(userName.match("^[a-zA-Z0-9]{8,25}$"))
+    if(userName.match(/^[\p{L}0-9\s]{8,}$/u))
     return true
     return false
 }

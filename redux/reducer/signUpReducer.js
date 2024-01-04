@@ -4,7 +4,8 @@ export const initialState = {
     password : "",
     reEnterPassword : "",
     isLoading : false,
-    token : null,
+    isSignedUpSuccessfully : false,
+    isPasswordShown : false,
 }
 export const reducer = (state = initialState,action) => {
     switch(action.type){
@@ -13,7 +14,9 @@ export const reducer = (state = initialState,action) => {
         case 'password_change' : return {...state,password : action.password}
         case 're_enter_password_change' : return {...state,reEnterPassword : action.pw}
         case 'loading' : return {...state,isLoading : true}
-        case 'success' : return {...state,isLoading : false,token : action.token}
+        case 'success' : return {...state,isLoading : false,isSignedUpSuccessfully : true}
         case 'fail' : return {...state,isLoading : false}
+        case 'toggle_password' : return {...state,isPasswordShown : !state.isPasswordShown }
+        default : return state
     }
 }

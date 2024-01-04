@@ -14,5 +14,8 @@ export const actionCreators = {
     },
     fail : () => {
         return {type : 'fail'}
+    },
+    togglePassword : () => {
+        return {type : 'toggle_password'}
     }
 }
