@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer  } from "react";
-import { StyleSheet,View,Alert,Text, ActivityIndicator, ToastAndroid,Pressable,RefreshControl} from "react-native";
+import { StyleSheet,View,Alert,Text, ActivityIndicator, ToastAndroid,Pressable} from "react-native";
 import  SearchBar  from "../components/SearchBar";
 import  Fab  from "../components/Fab";
 import NoteList  from "../components/NoteList";
@@ -11,14 +11,23 @@ import { actionCreators } from "../redux/action/homeAction";
 import noteRepository from "../repository/noteRepository";
 import * as SecureStore from 'expo-secure-store'
 import { useFocusEffect } from "@react-navigation/native";
+import {api} from "../api/noteApi" 
     export default function Home({navigation}){
         const [state,dispatch] = useReducer(reducer,initialState)
         const {searchQuery,modalVisible,noteList,message,isLoading} = state
 
         const handleLogout = async () => {
-            await SecureStore.deleteItemAsync("accessToken")
-            await SecureStore.deleteItemAsync("refreshToken")
-            navigation.replace('Login')
+            const accessToken = await SecureStore.getItemAsync("accessToken");
+            const refreshToken = await SecureStore.getItemAsync("refreshToken");
+            const result = await api.logout(accessToken,refreshToken)
+            if(result.status == 200){
+                await SecureStore.deleteItemAsync("accessToken")
+                await SecureStore.deleteItemAsync("refreshToken")
+                navigation.replace('Login')
+            }
+            else{
+                console.log(result);
+            }
         }
         const handleClose = () => {
             dispatch(actionCreators.changeModalVisible(false))

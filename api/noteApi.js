@@ -1,11 +1,16 @@
-import axios, { Axios } from 'axios'
+import axios from 'axios'
 import  * as SecureStore from 'expo-secure-store'
+import * as RootNavigation from "../RootNavigation.js"
 const BASE_URL = "https://terrier-modern-violently.ngrok-free.app"
 const axiosInstance = axios.create({baseURL : BASE_URL})
 axiosInstance.interceptors.request.use(
     async (config) => {
         const token = await SecureStore.getItemAsync('accessToken')
-        if(!config.url.includes("/api/auth/login") && !config.url.includes("/api/auth/signup")){
+        if(
+            !config.url.includes("/api/auth/login") &&
+            !config.url.includes("/api/auth/signup") &&
+            !config.url.includes("/api/auth/refreshToken") 
+        ){
             config.headers.Authorization = `Bearer ${token}`
         }
         return config
@@ -20,22 +25,32 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const originalConfig = error.config
         if(error.response){
-            if(error.response.status === 403 && !originalConfig.retry){
-                originalConfig.retry = true
-                try{
-                    const refreshToken = await SecureStore.getItemAsync('refreshToken')
-                    const response = await api.refreshToken(refreshToken)
-                    await SecureStore.setItemAsync('accessToken',response.data.accessToken)
-                    return axiosInstance(originalConfig)
-                }catch(_error){
-                    if (_error.response && _error.response.data) {
-                        return Promise.reject(_error.response.data);
-                      }
-                      return Promise.reject(_error);
+            if(error.response.status === 401){
+                if(
+                    error.response.headers['x-auth-status'] === 'Expired' && 
+                    originalConfig.url.includes("/api/auth/refreshToken") 
+                ){
+                    await SecureStore.deleteItemAsync('accessToken')
+                    await SecureStore.deleteItemAsync('refreshToken')
+                    RootNavigation.logout()
+                }
+                else{
+                    try{
+                        const refreshToken = await SecureStore.getItemAsync('refreshToken')
+                        const response = await api.refreshToken(refreshToken)
+                        await SecureStore.setItemAsync('accessToken',response.data.accessToken)
+                        await SecureStore.setItemAsync('refreshToken',response.data.refreshToken)
+                        return axiosInstance(originalConfig)
+                    }catch(_error){
+                        return Promise.reject(_error);
                     }
                 }
             }
+            else{
+                return Promise.reject(error)
+            }
         }
+    }
 )
 
 export const api = {
@@ -70,6 +85,13 @@ export const api = {
         return await axiosInstance.post("/api/auth/signup",{userName : un,email : em, password : pw})
     }, 
     refreshToken : async(refreshToken) => {
-        return await axiosInstance.post("/api/auth/refreshToken",{refreshToken})
-    }   
+        return await axiosInstance.post("/api/auth/refreshToken",null,{params : {refreshToken}})
+    },
+    logout : async(accessToken,refreshToken) => {
+        return await axiosInstance.post("/api/auth/logout",null,{
+            params : {
+                accessToken,refreshToken
+            }
+        })
+    }
 }

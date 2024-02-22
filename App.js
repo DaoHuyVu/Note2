@@ -5,6 +5,7 @@ import Home from './screen/Home'
 import Edit from './screen/EditNote'
 import Login  from './screen/Login';
 import SignUp from './screen/SignUp'
+import {navigationRef} from "./RootNavigation.js"
 import { useState,useEffect} from 'react';
 import * as SecureStore from 'expo-secure-store'
 const Stack = createNativeStackNavigator()
@@ -29,7 +30,7 @@ export default function App(){
     );
   }
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <StatusBar barStyle='light-content' backgroundColor='purple'></StatusBar>
       <Stack.Navigator initialRouteName= {shouldNavigate ? 'Home' : 'Login'}>
           <Stack.Screen name='Home' component={Home} />
