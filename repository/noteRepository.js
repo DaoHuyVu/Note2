@@ -12,7 +12,7 @@ class NoteRepository {
         try{
             if(this.notes === null){
                 const response = await api.getNotes()
-                this.notes = response.data
+                this.notes = response.data.notes
             }
             return this.notes
         }
