@@ -1,7 +1,7 @@
 import axios from 'axios'
 import  * as SecureStore from 'expo-secure-store'
 import * as RootNavigation from "../RootNavigation.js"
-const BASE_URL = "https://terrier-modern-violently.ngrok-free.app"
+const BASE_URL = "http://192.168.31.25:9192"
 const axiosInstance = axios.create({baseURL : BASE_URL})
 axiosInstance.interceptors.request.use(
     async (config) => {
